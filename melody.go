@@ -243,6 +243,18 @@ func (m *Melody) BroadcastMultiple(msg []byte, sessions []*Session) error {
 	return nil
 }
 
+// BroadcastMultipleOthers broadcasts a text message to multiple sessions given in the sessions slice, except me if included.
+func (m *Melody) BroadcastMultipleOthers(msg []byte, sessions []*Session, me *Session) error {
+	for _, sess := range sessions {
+		if sess != me {
+			if writeErr := sess.Write(msg); writeErr != nil {
+				return writeErr
+			}
+		}
+	}
+	return nil
+}
+
 // BroadcastBinary broadcasts a binary message to all sessions.
 func (m *Melody) BroadcastBinary(msg []byte) error {
 	if m.hub.closed() {
